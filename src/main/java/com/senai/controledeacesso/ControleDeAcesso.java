@@ -15,6 +15,7 @@ public class ControleDeAcesso {
 
     // Caminho para o arquivo bancoDeDados.txt e para a pasta imagens
     private static final File arquivoBancoDeDados = new File(pastaControleDeAcesso, "bancoDeDados.txt");
+    private static final File arquivoRegistros = new File(pastaControleDeAcesso, "arquivoRegistros.txt");
     public static final File pastaImagens = new File(pastaControleDeAcesso, "imagens");
 
     static String[] cabecalho = {"ID", "IdAcesso", "Nome", "Telefone", "Email", "Imagem"};
@@ -152,6 +153,7 @@ public class ControleDeAcesso {
                         novaMatrizRegistro[linhaNovoRegistro][1]);
                 usuarioEncontrado = true; // Marca que o usuário foi encontrado
                 matrizRegistrosDeAcesso = novaMatrizRegistro;
+                salvarRegistro(arquivoRegistros, matrizRegistrosDeAcesso);
                 break; // Sai do loop, pois já encontrou o usuário
             }
         }
@@ -320,6 +322,16 @@ public class ControleDeAcesso {
         }
     }
 
+    public static void salvarRegistro() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoRegistros))) {
+            for (String[] linha : matrizRegistrosDeAcesso) {
+                writer.write(String.join(",", linha) + "\n");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static void verificarEstruturaDeDiretorios() {
         // Verifica se a pasta ControleDeAcesso existe, caso contrário, cria
         if (!pastaControleDeAcesso.exists()) {
@@ -342,6 +354,20 @@ public class ControleDeAcesso {
                 System.out.println("Erro ao criar arquivo bancoDeDados.txt: " + e.getMessage());
             }
         }
+
+        // Verifica se o arquivo bancoDeDados.txt existe, caso contrário, cria
+        if (!arquivoRegistros.exists()) {
+            try {
+                if (arquivoRegistros.createNewFile()) {
+                    System.out.println("Arquivo arquivoRegistros.txt criado com sucesso.");
+                } else {
+                    System.out.println("Falha ao criar o arquivo arquivoRegistros.txt.");
+                }
+            } catch (IOException e) {
+                System.out.println("Erro ao criar arquivo arquivoRegistros.txt: " + e.getMessage());
+            }
+        }
+
 
         // Verifica se a pasta imagens existe, caso contrário, cria
         if (!pastaImagens.exists()) {
