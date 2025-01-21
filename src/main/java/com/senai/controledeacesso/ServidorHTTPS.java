@@ -286,7 +286,7 @@ public class ServidorHTTPS {
 
                 novaMatriz[novoID] = novoUsuario;
                 ControleDeAcesso.matrizCadastro = novaMatriz;
-                ControleDeAcesso.salvarDadosNoArquivo();
+                ControleDeAcesso.salvarDadosNoArquivo(ControleDeAcesso.arquivoBancoDeDados, novaMatriz);
 
                 String responseMessage = "Cadastro recebido com sucesso!";
                 exchange.sendResponseHeaders(200, responseMessage.length());
@@ -345,7 +345,7 @@ public class ServidorHTTPS {
                     // Substitui o cadastro na matriz com os novos dados
                     ControleDeAcesso.matrizCadastro[id] = registro;
 
-                    ControleDeAcesso.salvarDadosNoArquivo();
+                    ControleDeAcesso.salvarDadosNoArquivo(ControleDeAcesso.arquivoBancoDeDados, ControleDeAcesso.matrizCadastro);
 
                     // Resposta de sucesso
                     String response = "{\"status\":\"Cadastro atualizado com sucesso.\"}";

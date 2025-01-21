@@ -14,8 +14,8 @@ public class ControleDeAcesso {
     private static final File pastaControleDeAcesso = new File(System.getProperty("user.home"), "ControleDeAcesso");
 
     // Caminho para o arquivo bancoDeDados.txt e para a pasta imagens
-    private static final File arquivoBancoDeDados = new File(pastaControleDeAcesso, "bancoDeDados.txt");
-    private static final File arquivoRegistros = new File(pastaControleDeAcesso, "arquivoRegistros.txt");
+    public static final File arquivoBancoDeDados = new File(pastaControleDeAcesso, "bancoDeDados.txt");
+    public static final File arquivoRegistros = new File(pastaControleDeAcesso, "arquivoRegistros.txt");
     public static final File pastaImagens = new File(pastaControleDeAcesso, "imagens");
 
     static String[] cabecalho = {"ID", "IdAcesso", "Nome", "Telefone", "Email", "Imagem"};
@@ -153,7 +153,7 @@ public class ControleDeAcesso {
                         novaMatrizRegistro[linhaNovoRegistro][1]);
                 usuarioEncontrado = true; // Marca que o usuário foi encontrado
                 matrizRegistrosDeAcesso = novaMatrizRegistro;
-                salvarRegistro(arquivoRegistros, matrizRegistrosDeAcesso);
+                salvarDadosNoArquivo(arquivoRegistros, matrizRegistrosDeAcesso);
                 break; // Sai do loop, pois já encontrou o usuário
             }
         }
@@ -187,7 +187,7 @@ public class ControleDeAcesso {
                 System.out.println("id de acesso " + novoIdAcesso + " associado ao usuário " + matrizCadastro[linhas][2]);
                 conexaoMQTT.publicarMensagem("cadastro/disp", "CadastroConcluido");
                 encontrado = true;
-                salvarDadosNoArquivo();
+                salvarDadosNoArquivo(arquivoBancoDeDados, matrizCadastro);
                 break;
             }
         }
@@ -238,7 +238,7 @@ public class ControleDeAcesso {
             System.out.println("-----------------------Inserido com sucesso------------------------\n");
         }
         matrizCadastro = novaMatriz;
-        salvarDadosNoArquivo();
+        salvarDadosNoArquivo(arquivoBancoDeDados, matrizCadastro);
     }
 
     private static void atualizarUsuario() {
@@ -257,7 +257,7 @@ public class ControleDeAcesso {
 
         System.out.println("---------Atualizado com sucesso-----------");
         exibirCadastro();
-        salvarDadosNoArquivo();
+        salvarDadosNoArquivo(arquivoBancoDeDados, matrizCadastro);
     }
 
     public static void deletarUsuario() {
@@ -280,7 +280,7 @@ public class ControleDeAcesso {
 
         matrizCadastro = novaMatriz;
         matrizCadastro[0]=cabecalho;
-        salvarDadosNoArquivo();
+        salvarDadosNoArquivo(arquivoBancoDeDados, matrizCadastro);
         System.out.println("-----------------------Deletado com sucesso------------------------\n");
         idUsuarioRecebidoPorHTTP = 0;
     }
@@ -312,19 +312,9 @@ public class ControleDeAcesso {
         matrizCadastro[0] = cabecalho;
     }
 
-    public static void salvarDadosNoArquivo() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoBancoDeDados))) {
-            for (String[] linha : matrizCadastro) {
-                writer.write(String.join(",", linha) + "\n");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void salvarRegistro() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoRegistros))) {
-            for (String[] linha : matrizRegistrosDeAcesso) {
+    public static void salvarDadosNoArquivo(File arquivo, String[][] matriz) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
+            for (String[] linha : matriz) {
                 writer.write(String.join(",", linha) + "\n");
             }
         } catch (IOException e) {
