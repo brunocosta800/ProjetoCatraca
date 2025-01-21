@@ -61,7 +61,8 @@ public class ControleDeAcesso {
                     |       3- Atualizar cadastro por id                    |
                     |       4- Deletar um cadastro por id                   |
                     |       5- Associar TAG ou cartão de acesso ao usuário  |
-                    |       6- Sair                                         |
+                    |       6- Pesquisar registros de um usuário por id     |
+                    |       7- Sair                                         |
                     _________________________________________________________
                     """;
             System.out.println(menu);
@@ -85,13 +86,35 @@ public class ControleDeAcesso {
                     aguardarCadastroDeIdAcesso();
                     break;
                 case 6:
+                    pesquisarRegistroPorId();
+                    break;
+                case 7:
                     System.out.println("Fim do programa!");
                     break;
                 default:
                     System.out.println("Opção inválida!");
             }
 
-        } while (opcao != 6);
+        } while (opcao != 7);
+    }
+
+    public static void pesquisarRegistroPorId() {
+        System.out.println("Digite o ID do usuário para consultar seus registros: ");
+        String idUsuario = scanner.nextLine();
+        String nomeUsuario = "";
+
+        for (String[] linha : matrizCadastro) {
+            if (linha[0].equals(idUsuario)) {
+                nomeUsuario = linha[2];
+            }
+        }
+
+        System.out.println();
+        for (String[] linha : matrizRegistrosDeAcesso){
+            if (linha[0].equals(nomeUsuario)) {
+                System.out.println(linha[0] + "; " + linha[1]);
+            }
+        }
     }
 
     private static void aguardarCadastroDeIdAcesso() {
