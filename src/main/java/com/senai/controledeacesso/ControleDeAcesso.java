@@ -18,7 +18,8 @@ public class ControleDeAcesso {
     public static final File arquivoRegistros = new File(pastaControleDeAcesso, "arquivoRegistros.txt");
     public static final File pastaImagens = new File(pastaControleDeAcesso, "imagens");
 
-    static String[] cabecalho = {"ID", "IdAcesso", "Nome", "Telefone", "Email", "Imagem"};
+    static String[] cabecalhoBanco = {"ID", "IdAcesso", "Nome", "Telefone", "Email", "Imagem"};
+    static String[] cabecalhoRegistros = {"", "", ""};
     static String[][] matrizCadastro = {{"", ""}};
     public static String[][] matrizRegistrosDeAcesso = {{"", "", ""}};// inicia a matriz com uma linha e duas colunas com "" para que na primeira vez não apareça null na tabela de registros
 
@@ -37,9 +38,11 @@ public class ControleDeAcesso {
 
     public static void main(String[] args) {
         verificarEstruturaDeDiretorios();
-        carregarDadosDoArquivo();
+        carregarDadosDoArquivo(arquivoRegistros, matrizRegistrosDeAcesso, cabecalhoRegistros);
+        carregarDadosDoArquivo(arquivoBancoDeDados, matrizCadastro, cabecalhoBanco);
+
         conexaoMQTT = new CLienteMQTT(brokerUrl, topico, ControleDeAcesso::processarMensagemMQTTRecebida);
-        servidorHTTPS = new ServidorHTTPS(); // Inicia o servidor HTTPS
+        servidorHTTPS = new ServidorHTTPS();// Inicia o servidor HTTPS
         menuPrincipal();
 
         // Finaliza o todos os processos abertos ao sair do programa
@@ -279,37 +282,43 @@ public class ControleDeAcesso {
         }
 
         matrizCadastro = novaMatriz;
-        matrizCadastro[0]=cabecalho;
+        matrizCadastro[0]=cabecalhoBanco;
         salvarDadosNoArquivo(arquivoBancoDeDados, matrizCadastro);
         System.out.println("-----------------------Deletado com sucesso------------------------\n");
         idUsuarioRecebidoPorHTTP = 0;
     }
 
     // Funções para persistência de dados
-    private static void carregarDadosDoArquivo() {
+    public static void carregarDadosDoArquivo(File arquivo, String[][] matriz, String[] cabecalho) {
+        if(matriz != matrizRegistrosDeAcesso){
+            matriz[0] = cabecalho;
+        }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivoBancoDeDados))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
             String linha;
             StringBuilder conteudo = new StringBuilder();
+            conteudo.setLength(0);
 
             while ((linha = reader.readLine()) != null) {
                 if (!linha.trim().isEmpty()) {
                     conteudo.append(linha).append("\n");
                 }
             }
-
             if (!conteudo.toString().trim().isEmpty()) {
                 String[] linhasDaTabela = conteudo.toString().split("\n");
-                matrizCadastro = new String[linhasDaTabela.length][cabecalho.length];
+                matriz = new String[linhasDaTabela.length][cabecalho.length];
                 for (int i = 0; i < linhasDaTabela.length; i++) {
-                    matrizCadastro[i] = linhasDaTabela[i].split(",");
+                    matriz[i] = linhasDaTabela[i].split(",");
+                    System.out.println("LINHA INTEIRA: " + linhasDaTabela[i]);
+                    for (String dado : matriz[i]) {
+                        System.out.println("    " + dado);
+                    }
                 }
             }
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        matrizCadastro[0] = cabecalho;
+
     }
 
     public static void salvarDadosNoArquivo(File arquivo, String[][] matriz) {
@@ -345,7 +354,7 @@ public class ControleDeAcesso {
             }
         }
 
-        // Verifica se o arquivo bancoDeDados.txt existe, caso contrário, cria
+        // Verifica se o arquivo arquivoRegistros.txt existe, caso contrário, cria
         if (!arquivoRegistros.exists()) {
             try {
                 if (arquivoRegistros.createNewFile()) {
