@@ -108,7 +108,11 @@ public class ControleDeAcesso {
     public static void deletarRegistros(){
         matrizRegistrosDeAcesso = new String[][]{{"", "", ""}};
 
-        salvarDadosNoArquivo(arquivoRegistros, matrizRegistrosDeAcesso);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoRegistros))) {
+            writer.write("");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void pesquisarRegistroPorId() {
