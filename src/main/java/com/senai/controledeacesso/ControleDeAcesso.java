@@ -282,7 +282,6 @@ public class ControleDeAcesso {
     }
 
     private static void atualizarUsuario() {
-
         exibirCadastro();
         System.out.println("Escolha um id para atualizar o cadastro:");
         int idUsuario = scanner.nextInt();
