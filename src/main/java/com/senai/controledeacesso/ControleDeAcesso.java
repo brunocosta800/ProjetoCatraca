@@ -352,7 +352,6 @@ public class ControleDeAcesso {
             throw new RuntimeException(e);
         }
 
-
         return matriz;
     }
 
