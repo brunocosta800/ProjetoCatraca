@@ -65,7 +65,8 @@ public class ControleDeAcesso {
                     |       4- Deletar um cadastro por id                   |
                     |       5- Associar TAG ou cartão de acesso ao usuário  |
                     |       6- Pesquisar registros de um usuário por id     |
-                    |       7- Sair                                         |
+                    |       7- Deletar todos os registros de acesso         |
+                    |       8- Sair                                         |
                     _________________________________________________________
                     """;
             System.out.println(menu);
@@ -92,13 +93,22 @@ public class ControleDeAcesso {
                     pesquisarRegistroPorId();
                     break;
                 case 7:
+                    deletarRegistros();
+                    break;
+                case 8:
                     System.out.println("Fim do programa!");
                     break;
                 default:
                     System.out.println("Opção inválida!");
             }
 
-        } while (opcao != 7);
+        } while (opcao != 8);
+    }
+
+    public static void deletarRegistros(){
+        matrizRegistrosDeAcesso = new String[][]{{"", "", ""}};
+
+        salvarDadosNoArquivo(arquivoRegistros, matrizRegistrosDeAcesso);
     }
 
     public static void pesquisarRegistroPorId() {
