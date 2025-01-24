@@ -332,15 +332,13 @@ public class ControleDeAcesso {
                 matriz = new String[linhasDaTabela.length][cabecalho.length];
                 for (int i = 0; i < linhasDaTabela.length; i++) {
                     matriz[i] = linhasDaTabela[i].split(",");
-                    System.out.println("LINHA INTEIRA: " + linhasDaTabela[i]);
-                    for (String dado : matriz[i]) {
-                        System.out.println("    " + dado);
-                    }
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+
         return matriz;
     }
 
