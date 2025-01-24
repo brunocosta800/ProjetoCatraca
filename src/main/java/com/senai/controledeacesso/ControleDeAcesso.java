@@ -38,8 +38,8 @@ public class ControleDeAcesso {
 
     public static void main(String[] args) {
         verificarEstruturaDeDiretorios();
-        carregarDadosDoArquivo(arquivoRegistros, matrizRegistrosDeAcesso, cabecalhoRegistros);
-        carregarDadosDoArquivo(arquivoBancoDeDados, matrizCadastro, cabecalhoBanco);
+        matrizRegistrosDeAcesso = carregarDadosDoArquivo(arquivoRegistros, matrizRegistrosDeAcesso, cabecalhoRegistros);
+        matrizCadastro = carregarDadosDoArquivo(arquivoBancoDeDados, matrizCadastro, cabecalhoBanco);
 
         conexaoMQTT = new CLienteMQTT(brokerUrl, topico, ControleDeAcesso::processarMensagemMQTTRecebida);
         servidorHTTPS = new ServidorHTTPS();// Inicia o servidor HTTPS
@@ -289,7 +289,7 @@ public class ControleDeAcesso {
     }
 
     // Funções para persistência de dados
-    public static void carregarDadosDoArquivo(File arquivo, String[][] matriz, String[] cabecalho) {
+    public static String[][] carregarDadosDoArquivo(File arquivo, String[][] matriz, String[] cabecalho) {
         if(matriz != matrizRegistrosDeAcesso){
             matriz[0] = cabecalho;
         }
@@ -318,7 +318,7 @@ public class ControleDeAcesso {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        return matriz;
     }
 
     public static void salvarDadosNoArquivo(File arquivo, String[][] matriz) {
